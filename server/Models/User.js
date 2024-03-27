@@ -19,7 +19,18 @@ const UserSchema = mongoose.Schema({
     friends: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Friend'  // Reference the 'Friend' model
-    }]
+    }],
+    keys:{
+        publicKey:{
+            type:String,
+            default: ''
+        },
+        privateKey:{
+            type:String,
+            default: ''
+        }
+    
+    }
 });
 
 module.exports = mongoose.model("User", UserSchema);

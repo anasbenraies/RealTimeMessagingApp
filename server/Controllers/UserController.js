@@ -9,10 +9,10 @@ const login = async (req, res) => {
     if (!ResultUser){
         res.status(404).json("check email or password !")
     }else {
-        const ResponseUser = { id: ResultUser?.id, username: ResultUser?.username, email: ResultUser?.email }
+        const ResponseUser = { id: ResultUser?.id, username: ResultUser?.username, email: ResultUser?.email , privateKey:ResultUser?.keys?.privateKey}
         const friendListPromises = ResultUser?.friends.map(async friend_id => {
             const friend = await User.findById(friend_id)
-            return { username: friend?.username, email: friend?.email }
+            return { username: friend?.username, email: friend?.email , publicKey: friend?.keys?.publicKey}
         });
         const friendList = await Promise.all(friendListPromises);
         ResponseUser.friends = friendList;
