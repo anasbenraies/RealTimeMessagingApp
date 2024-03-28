@@ -34,10 +34,10 @@ io.on('connection', (socket) => {
         }
     })
 
-    socket.on("SendingMessage", (message) => {
+    socket.on("SendingMessage", (encryptedMessage) => {
         ActiveUsers.forEach(user => {
-            if (user[0] === message.to.email) {
-                io.to(user[1]).emit("SendMessage", message)
+            if (user[0] === encryptedMessage.to.email) {
+                io.to(user[1]).emit("SendMessage", encryptedMessage)
             }
         })
     })

@@ -14,7 +14,9 @@ export default function FriendCard({ friend }) {
      const res= await fetch(`http://127.0.0.1:8000/users/getmessages/?friendEmail=${friend.email}&currentEmail=${currentUser.email}`,{method:"GET"
      })
      const data =await res.json()
-  
+     //decypt the messages here
+     //...
+     
      dispatch(setMessages(data))
 
      //console.log(data)

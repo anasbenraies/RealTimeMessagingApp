@@ -5,7 +5,7 @@ import { Grid, Button } from 'semantic-ui-react'
 import Message from './Message'
 import {useState} from "react"
 import {addMessage} from "../features/User"
-
+import {Enc_Message_PublicKey} from "../Conf/encryption"
 
 
 export default function FreindCollection({socket}) {
@@ -36,36 +36,37 @@ export default function FreindCollection({socket}) {
     }
 
     const handleSend=async(content)=>{
-        let message ={from:{},to:{},Content:content}
+        //create the message object
+        let encryptedMessage = {from:{},to:{},message:Enc_Message_PublicKey(content,currentfriend.publicKey)}
+        let message = {from:{},to:{},Content:content}
+        //let message ={from:{},to:{},Content:content}
+        encryptedMessage.from.username=currentUser.username
+        encryptedMessage.from.email=currentUser.email
+        encryptedMessage.to.username = currentfriend.username
+        encryptedMessage.to.email = currentfriend.email
+
         message.from.username=currentUser.username
         message.from.email=currentUser.email
         message.to.username = currentfriend.username
         message.to.email = currentfriend.email
-        console.log(message)
+        console.log(encryptedMessage)
         //add the message to the discussion for the current user
         dispatch(addMessage(message))
         //add message to database 
-        const res = await fetch("http://localhost:8000/users/addmessage",{method:"POST",body:JSON.stringify(message),headers:{"Content-Type":"application/json"}})
+        const res = await fetch("http://localhost:8000/users/addmessage",{method:"POST",body:JSON.stringify(encryptedMessage),headers:{"Content-Type":"application/json"}})
         // const data = await res.json()
         //add message as real time for the other User 
-        socket.emit("SendingMessage",message)
+        socket.emit("SendingMessage",encryptedMessage)
         //recieve the message from the other user if this is the case 
-        socket.on("SendMessage",(message)=>{
+        socket.on("SendMessage",(encryptedMessage)=>{
             //set the message to the discussion for the current friend only if the message is for the current friend
-            if(message.from.email===currentfriend.email){
+            if(encryptedMessage.from.email===currentfriend.email){
+            //decrypt the message here
+            //...
+
             dispatch(addMessage(message))
             }
         })
-
-        // const res = await fetch("http://localhost:8000/users/addmessage",{
-        //     method:"post",
-        //     headers:{
-        //         "Content-Type" : "application/json"
-        //     },
-        //     body:JSON.stringify(content)
-            
-        // })
-        
     }
 
 

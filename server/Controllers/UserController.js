@@ -1,5 +1,6 @@
 const User = require("../Models/User")
-const Message = require("../Models/Message")
+const Message = require("../Models/Message");
+const EncMessage = require("../Models/EncMessage");
 
 
 const login = async (req, res) => {
@@ -42,7 +43,7 @@ const getMessages = async (req, res) => {
 const addMessage=async(req ,res)=>{
      const message = req.body 
      // must be a verification here with @hapyoi
-     const NewMessage = new Message(message)
+     const NewMessage = new EncMessage(message)
      try{
         await NewMessage.save()
      }catch(err){
