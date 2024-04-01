@@ -5,7 +5,9 @@ import { Grid, Button } from 'semantic-ui-react'
 import Message from './Message'
 import {useState} from "react"
 import {addMessage} from "../features/User"
-import {Enc_Message_PublicKey} from "../Conf/encryption"
+import Enc_Message_PublicKey from '../Config/Encrypt.jsm'
+import CryptoJS from 'crypto-js';
+import NodeRSA from 'node-rsa'
 
 
 export default function FreindCollection({socket}) {
@@ -35,6 +37,17 @@ export default function FreindCollection({socket}) {
          /* Shadow effect */
     }
 
+    function decryptSecretKey(encryptedSecretKey, privateKey) {
+          const key = new NodeRSA(privateKey);
+          return key.decrypt(encryptedSecretKey, 'utf8');
+        }
+
+    function DecryptMessage(encryptedMessage, secretKey) {
+          const bytes = CryptoJS.AES.decrypt(encryptedMessage, secretKey);
+          return bytes.toString(CryptoJS.enc.Utf8);
+        }
+
+
     const handleSend=async(content)=>{
         //create the message object
         let encryptedMessage = {from:{},to:{},message:Enc_Message_PublicKey(content,currentfriend.publicKey)}
@@ -61,10 +74,11 @@ export default function FreindCollection({socket}) {
         socket.on("SendMessage",(encryptedMessage)=>{
             //set the message to the discussion for the current friend only if the message is for the current friend
             if(encryptedMessage.from.email===currentfriend.email){
-            //decrypt the message here
-            //...
-
-            dispatch(addMessage(message))
+                //decrypt the message here
+                let secretKey = decryptSecretKey(encryptedMessage.message.EncSecretKey,currentUser.privateKey)
+                let decryptedMessage = DecryptMessage(encryptedMessage.message.EncContent,secretKey)
+                message.Content = decryptedMessage
+            dispatch(addMessage(message)) //continue here !!!
             }
         })
     }
