@@ -52,7 +52,7 @@ const Authentification = ({socket}) => {
                 <Form >
                     <Form.Group widths='equal'>
                         <Form.Input onChange={(e) => setEmail(e.target.value)} fluid label='Email' placeholder='Email' />
-                        <Form.Input onChange={(e) => setPassword(e.target.value)} fluid label='Password' placeholder='Password' />
+                        <Form.Input onChange={(e) => setPassword(e.target.value)} fluid label='Password' placeholder='Password' type='password' />
                     </Form.Group>
                     <Form.Checkbox label='I agree to the Terms and Conditions' />
                     <Button type='submit' inverted color='blue' onClick={Submit}>Submit</Button>
